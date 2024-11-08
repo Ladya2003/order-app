@@ -1,7 +1,5 @@
-1. How to launch: npm i, npm run build, npm run start
-2.
+# order-app
 
-what do i need to fix
+Test task for DM-17
 
-1. make components atomic
-2. clean package json (input mask)
+How to launch: npm i, npm run build, npm run start
