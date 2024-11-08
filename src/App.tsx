@@ -1,25 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { AddIcon } from '@chakra-ui/icons';
+import { Button, Flex, Heading } from '@chakra-ui/react';
+import { useState } from 'react';
+import { OrderForm } from './components/OrderForm';
+import OrderList from './components/OrderList';
+import { colors } from './theme/theme';
 
 function App() {
+  const [isCreating, setIsCreating] = useState(false);
+
+  const toogleCreation = () => {
+    setIsCreating(!isCreating);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Flex
+      gap="20px"
+      direction="column"
+      padding="40px"
+      color={colors.primary.secondary}
+    >
+      <Flex justify="space-between" width="100%">
+        <Heading fontSize="24px" color={colors.primary.secondary}>
+          {isCreating ? 'Создание заказа' : 'Заказы'}
+        </Heading>
+
+        {!isCreating && (
+          <Button
+            onClick={toogleCreation}
+            padding="10px"
+            borderRadius="4px"
+            display="flex"
+            alignItems="center"
+            gap="8px"
+            fontSize="16px"
+            fontWeight={500}
+            bgColor={colors.secondary.button}
+          >
+            <AddIcon boxSize="15px" />
+            Добавить заказ
+          </Button>
+        )}
+      </Flex>
+
+      {isCreating && <OrderForm setIsCreating={setIsCreating} />}
+
+      {!isCreating && <OrderList />}
+    </Flex>
   );
 }
 
