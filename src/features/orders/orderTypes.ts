@@ -17,7 +17,7 @@ export interface IProduct {
 export interface Order {
   id: number;
   client: Client;
-  deliveryDate: Date;
+  deliveryDate: string;
   shippingCost: number;
   products: IProduct[];
   status: OrderStatus;

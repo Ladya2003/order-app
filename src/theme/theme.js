@@ -11,6 +11,7 @@ export const colors = {
     button: '#3743AF',
     buttonColor: '#313B9B',
     divider: '#CBD5E0',
+    rubBgColor: '#D8DBF3',
   },
   status: {
     createdColor: '#505CC8',

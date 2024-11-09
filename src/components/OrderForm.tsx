@@ -42,6 +42,8 @@ const productSchema = z.object({
   comment: z.string().trim().optional(),
 });
 
+type ProductSchema = z.infer<typeof productSchema>;
+
 const clientSchema = z.object({
   name: z.string().trim().min(1, 'Выберите имя клиента'),
   phone: z.string().trim().min(1, 'Введите телефон клиента'),
@@ -64,6 +66,7 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [suggestions, setSuggestions] = useState<[{ value?: string }]>([{}]); // Store suggestions here
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [shippingPrice, setShippingPrice] = useState(0);
 
   const dispatch = useDispatch();
   const clients = useSelector((state: RootState) => state.clients.clients);
@@ -80,6 +83,7 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
     getValues,
     formState: { errors, isValid },
     handleSubmit,
+    trigger,
   } = useForm<OrderSchema>({
     mode: 'onChange',
     resolver: zodResolver(orderSchema),
@@ -100,20 +104,21 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
     name: 'products',
   });
 
-  const totalCost = productFields.reduce((acc, cur) => (acc += cur.cost), 0);
-  const totalCostWithShipping = totalCost + (getValues('shippingCost') ?? 0);
-
-  console.log('totalCost', totalCost);
-  console.log('totalCostWithShipping', totalCostWithShipping);
+  const totalCost = productFields.reduce(
+    (acc, cur) => (acc += cur.cost * cur.count),
+    0,
+  );
+  console.log("getValues('shippingCost')", getValues('shippingCost'));
+  const totalCostWithShipping = totalCost + (shippingPrice || 0);
 
   const handleSave = (formValues: OrderSchema) => {
-    console.log('formValues', formValues);
     if (isValid) {
       dispatch(
         addOrder({
           ...formValues,
           id: Date.now(),
           status: OrderStatus.Created,
+          deliveryDate: new Date(formValues.deliveryDate).toISOString(),
         }),
       );
 
@@ -133,12 +138,49 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
     }
   };
 
-  // TODO: somewhy adds two times
-  const handleAddProduct = (formState: OrderSchema) => {
-    console.log('formState', formState);
-    append(formState.products[productFields.length]);
+  // const handleAddProduct = async () => {
+  //   // Get the index where we will add the new product
+  //   const newIndex = productFields.length;
 
-    setIsAdding(false);
+  //   // Trigger validation for the current product fields
+  //   const isProductValid = await trigger(`products.${newIndex}`);
+
+  //   if (isProductValid) {
+  //     // Get the new product values
+  //     const newProduct = getValues(`products.${newIndex}`);
+
+  //     // Check if the product already exists in the productFields array
+  //     const productExists = productFields.some(
+  //       (product) => product.article === newProduct.article, // Adjust the condition to your unique key
+  //     );
+
+  //     if (!productExists) {
+  //       // Append the new product only if it doesn't already exist
+  //       append(newProduct);
+  //       console.log('New product added:', newProduct);
+  //     } else {
+  //       console.log('Product already exists, not adding again.');
+  //     }
+  //   }
+  // };
+
+  const handleAddProduct = async () => {
+    // Get the index where we will add the new product
+    const newIndex = productFields.length;
+
+    // Trigger validation for the current product fields
+    const isProductValid = await trigger(`products.${newIndex}`);
+
+    if (isProductValid) {
+      const newProduct = getValues(`products.${newIndex}`);
+
+      productFields[productFields.length] = {
+        ...newProduct,
+        id: newProduct.article,
+      };
+
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -163,10 +205,7 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
                     <Select
                       options={options}
                       value={value}
-                      onChange={(e) => {
-                        onChange(e);
-                        console.log(e);
-                      }}
+                      onChange={(e) => onChange(e)}
                       placeholder="Выберите постоянного клиента"
                     />
                   );
@@ -264,33 +303,36 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
                     </Flex>
 
                     <Box position="relative" width="100%">
-                      {isDropdownVisible && suggestions.length > 0 && (
-                        <Box
-                          position="absolute"
-                          bg="white"
-                          boxShadow="md"
-                          zIndex="10"
-                          width="100%"
-                          top={0}
-                        >
-                          <List.Root>
-                            {suggestions.map((suggestion, index) => (
-                              <ListItem
-                                key={index}
-                                p={2}
-                                cursor="pointer"
-                                _hover={{ bg: 'gray.100' }}
-                                onClick={() => {
-                                  onChange(suggestion.value);
-                                  setDropdownVisible(false);
-                                }}
-                              >
-                                {suggestion.value}
-                              </ListItem>
-                            ))}
-                          </List.Root>
-                        </Box>
-                      )}
+                      {isDropdownVisible &&
+                        (suggestions.length > 1 ||
+                          (suggestions.length === 1 &&
+                            Object.keys(suggestions[0]).length > 0)) && (
+                          <Box
+                            position="absolute"
+                            bg="white"
+                            boxShadow="md"
+                            zIndex="10"
+                            width="100%"
+                            top={0}
+                          >
+                            <List.Root>
+                              {suggestions.map((suggestion, index) => (
+                                <ListItem
+                                  key={index}
+                                  p={2}
+                                  cursor="pointer"
+                                  _hover={{ bg: 'gray.100' }}
+                                  onClick={() => {
+                                    onChange(suggestion.value);
+                                    setDropdownVisible(false);
+                                  }}
+                                >
+                                  {suggestion.value}
+                                </ListItem>
+                              ))}
+                            </List.Root>
+                          </Box>
+                        )}
                     </Box>
                   </>
                 )}
@@ -308,17 +350,34 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
                 name="shippingCost"
                 render={({ field: { value, onChange } }) => {
                   return (
-                    <Input
-                      name={value?.toString()}
-                      value={value}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        onChange(value ? value : e.target.value);
-                      }}
-                      placeholder="Введите сумму"
-                      color={colors.primary.secondary}
-                      type="number"
-                    />
+                    <Flex alignItems="center" width="100%" gap="1px">
+                      <Input
+                        name={value?.toString()}
+                        value={value}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+
+                          onChange(value ? value : e.target.value);
+                          setShippingPrice(value);
+                        }}
+                        placeholder="Введите сумму"
+                        color={colors.primary.secondary}
+                        type="number"
+                      />
+
+                      <Box
+                        bgColor={colors.secondary.rubBgColor}
+                        height="100%"
+                        borderEndRadius="4px"
+                        aspectRatio={1.4}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        fontSize="14px"
+                      >
+                        RUB
+                      </Box>
+                    </Flex>
                   );
                 }}
               />
@@ -581,7 +640,7 @@ export const OrderForm = ({ setIsCreating }: IOrderFormProps) => {
                         <Table.Cell>
                           <Button
                             bgColor={colors.secondary.button}
-                            onClick={handleSubmit(handleAddProduct)}
+                            onClick={handleAddProduct}
                           >
                             Добавить
                           </Button>

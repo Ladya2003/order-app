@@ -84,16 +84,37 @@ const OrderItem: React.FC<OrderItemProps> = ({
       <Table.Cell>{dayjs(deliveryDate).format('DD.MM.YYYY')}</Table.Cell>
       <Table.Cell>{address}</Table.Cell>
       <Table.Cell>{address}</Table.Cell>
-      {products.length < 1 && <Table.Cell colSpan={4}></Table.Cell>}
-      {/* TODO: make it display okay */}
-      {products.map((product) => (
-        <Table.Row>
-          <Table.Cell>{product.count}</Table.Cell>
-          <Table.Cell>{product.cost}</Table.Cell>
-          <Table.Cell>{shippingCost}</Table.Cell>
-          <Table.Cell>{product.count + shippingCost}</Table.Cell>
-        </Table.Row>
-      ))}
+
+      {products.length < 1 ? (
+        <Table.Cell colSpan={4}></Table.Cell>
+      ) : (
+        <>
+          <Table.Cell>
+            {products.map((product) => (
+              <Text>{product.count}</Text>
+            ))}
+          </Table.Cell>
+
+          <Table.Cell>
+            {products.map((product) => (
+              <Text>{product.cost}</Text>
+            ))}
+          </Table.Cell>
+
+          <Table.Cell>
+            {products.map(() => (
+              <Text>{shippingCost}</Text>
+            ))}
+          </Table.Cell>
+
+          <Table.Cell>
+            {products.map((product) => (
+              <Text>{product.count * product.count + shippingCost}</Text>
+            ))}
+          </Table.Cell>
+        </>
+      )}
+
       <Table.Cell>{comments}</Table.Cell>
       <Table.Cell display="flex" alignItems="center">
         <Button
