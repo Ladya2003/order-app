@@ -31,7 +31,7 @@ interface IProductTable {
 }
 
 export const ProductTableMolecule = ({
-  errors,
+  errors: { products: productsError },
   control,
   shippingPrice,
   trigger,
@@ -77,19 +77,22 @@ export const ProductTableMolecule = ({
   };
 
   const handleSave = (formValues: OrderSchema) => {
-    if (isValid) {
-      dispatch(
-        addOrder({
-          ...formValues,
-          id: Date.now(),
-          status: OrderStatus.Created,
-          deliveryDate: new Date(formValues.deliveryDate).toISOString(),
-        }),
-      );
-
-      onHideCreation();
+    if (!isValid) {
+      return;
     }
+
+    dispatch(
+      addOrder({
+        ...formValues,
+        id: Date.now(),
+        status: OrderStatus.Created,
+        deliveryDate: new Date(formValues.deliveryDate).toISOString(),
+      }),
+    );
+
+    onHideCreation();
   };
+
   return (
     <Fieldset.Content flex={1}>
       <Fieldset.Root>
@@ -157,27 +160,23 @@ export const ProductTableMolecule = ({
                       <Field
                         display="flex"
                         alignItems="flex-start"
-                        invalid={
-                          !!errors.products?.[productFields.length]?.name
-                        }
+                        invalid={!!productsError?.[productFields.length]?.name}
                       >
                         <Controller
                           control={control}
                           name={`products.${productFields.length}.name`}
-                          render={({ field: { value, onChange } }) => {
-                            return (
-                              <Input
-                                name={value}
-                                value={value}
-                                onChange={onChange}
-                                placeholder="Название товара"
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'flex-start',
-                                }}
-                              />
-                            );
-                          }}
+                          render={({ field: { value, onChange } }) => (
+                            <Input
+                              name={value}
+                              value={value}
+                              onChange={onChange}
+                              placeholder="Название товара"
+                              style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                              }}
+                            />
+                          )}
                         />
                       </Field>
                     </Table.Cell>
@@ -185,77 +184,67 @@ export const ProductTableMolecule = ({
                     <Table.Cell>
                       <Field
                         invalid={
-                          !!errors.products?.[productFields.length]?.article
+                          !!productsError?.[productFields.length]?.article
                         }
                       >
                         <Controller
                           control={control}
                           name={`products.${productFields.length}.article`}
-                          render={({ field: { value, onChange } }) => {
-                            return (
-                              <Input
-                                name={value}
-                                value={value}
-                                onChange={onChange}
-                                placeholder="Название артикула"
-                              />
-                            );
-                          }}
+                          render={({ field: { value, onChange } }) => (
+                            <Input
+                              name={value}
+                              value={value}
+                              onChange={onChange}
+                              placeholder="Название артикула"
+                            />
+                          )}
                         />
                       </Field>
                     </Table.Cell>
 
                     <Table.Cell>
                       <Field
-                        invalid={
-                          !!errors.products?.[productFields.length]?.count
-                        }
+                        invalid={!!productsError?.[productFields.length]?.count}
                       >
                         <Controller
                           control={control}
                           name={`products.${productFields.length}.count`}
-                          render={({ field: { value, onChange } }) => {
-                            return (
-                              <Input
-                                name={value?.toString()}
-                                value={value}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value);
+                          render={({ field: { value, onChange } }) => (
+                            <Input
+                              name={value?.toString()}
+                              value={value}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
 
-                                  onChange(value ? value : e.target.value);
-                                }}
-                                placeholder="Кол-во товара"
-                                type="number"
-                              />
-                            );
-                          }}
+                                onChange(value ? value : e.target.value);
+                              }}
+                              placeholder="Кол-во товара"
+                              type="number"
+                            />
+                          )}
                         />
                       </Field>
                     </Table.Cell>
 
                     <Table.Cell>
                       <Field
-                        invalid={
-                          !!errors.products?.[productFields.length]?.cost
-                        }
+                        invalid={!!productsError?.[productFields.length]?.cost}
                       >
                         <Controller
                           control={control}
                           name={`products.${productFields.length}.cost`}
-                          render={({ field: { value, onChange } }) => {
-                            return (
-                              <Input
-                                name={value?.toString()}
-                                value={value}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value);
-                                  onChange(value ? value : e.target.value);
-                                }}
-                                placeholder="Стоимость товара"
-                                type="number"
-                              />
-                            );
-                          }}
+                          render={({ field: { value, onChange } }) => (
+                            <Input
+                              name={value?.toString()}
+                              value={value}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                onChange(value ? value : e.target.value);
+                              }}
+                              placeholder="Стоимость товара"
+                              type="number"
+                            />
+                          )}
                         />
                       </Field>
                     </Table.Cell>
@@ -263,22 +252,20 @@ export const ProductTableMolecule = ({
                     <Table.Cell>
                       <Field
                         invalid={
-                          !!errors.products?.[productFields.length]?.comment
+                          !!productsError?.[productFields.length]?.comment
                         }
                       >
                         <Controller
                           control={control}
                           name={`products.${productFields.length}.comment`}
-                          render={({ field: { value, onChange } }) => {
-                            return (
-                              <Input
-                                name={value}
-                                value={value}
-                                onChange={onChange}
-                                placeholder="Комментарий"
-                              />
-                            );
-                          }}
+                          render={({ field: { value, onChange } }) => (
+                            <Input
+                              name={value}
+                              value={value}
+                              onChange={onChange}
+                              placeholder="Комментарий"
+                            />
+                          )}
                         />
                       </Field>
                     </Table.Cell>

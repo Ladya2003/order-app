@@ -1,5 +1,4 @@
 import { colors } from '../../../../theme';
-
 import { Fieldset, Box, Textarea } from '@chakra-ui/react';
 import InputMask from 'react-input-mask';
 import { SelectAtom } from '../../atoms/Select';
@@ -8,7 +7,7 @@ import { Field } from '../../../ui/field';
 import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';
 import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Client } from '../../../../features/clients/clientTypes';
-import { formatPhone } from '../../../../utils/phone';
+import { formatPhone } from '../../../../utils';
 
 type Props = {
   errors: FieldErrors<OrderSchema>;

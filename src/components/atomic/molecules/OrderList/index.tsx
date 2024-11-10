@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { fetchClients } from '../../../../features/clients/clientSlice';
 import { colors } from '../../../../theme';
 
-const selectOrders = (state: RootState) => state.orders.orders;
+const selectOrders = (state: RootState) => state.orders?.orders;
 
 const OrderListMolecule = () => {
   const orders = useSelector(selectOrders);
