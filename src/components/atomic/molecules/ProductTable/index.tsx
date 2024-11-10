@@ -1,42 +1,16 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addOrder } from '../../../../features/orders/orderSlice';
-import {
-  Input,
-  Button,
-  Fieldset,
-  Flex,
-  Table,
-  Box,
-  Text,
-  Textarea,
-  List,
-  ListItem,
-  ClipboardRoot,
-} from '@chakra-ui/react';
-import InputMask from 'react-input-mask';
-import { fetchAddressSuggestions } from '../../../../services/dadataService';
-import { SelectAtom } from '../../atoms/Select';
-import { z } from 'zod';
+import { Input, Button, Fieldset, Flex, Table, Text } from '@chakra-ui/react';
 import {
   Controller,
-  useForm,
   useFieldArray,
   FieldErrors,
   Control,
 } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { OrderStatus } from '../../../../features/orders/orderTypes';
 import { Field } from '../../../ui/field';
 import { colors } from '../../../../theme/theme';
-import 'react-phone-input-2/lib/style.css';
-import { ClipboardIconButton } from '../../../ui/clipboard';
-import DateSelectorAtom from '../../atoms/DateSelector';
-import { formatPhone } from '../../../../utils/phone';
-import { OrderDataMolecule } from '../../molecules/OrderData';
-import { OrderDeliveryMolecule } from '../../molecules/OrderDelivery';
 import { OrderSchema } from '../../organisms/OrderForm';
 import { formatArticle } from '../../../../utils/article';
 import {
@@ -70,7 +44,7 @@ export const ProductTableMolecule = ({
 
   const [isAdding, setIsAdding] = useState(false);
 
-  const { fields: productFields, append } = useFieldArray({
+  const { fields: productFields } = useFieldArray({
     control,
     name: 'products',
   });

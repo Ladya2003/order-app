@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { colors } from '../../../../theme/theme';
-import 'react-phone-input-2/lib/style.css';
 import { formatPhone } from '../../../../utils/phone';
 import { OrderDataMolecule } from '../../molecules/OrderData';
 import { OrderDeliveryMolecule } from '../../molecules/OrderDelivery';

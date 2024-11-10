@@ -5,13 +5,8 @@ import InputMask from 'react-input-mask';
 import { SelectAtom } from '../../atoms/Select';
 import { Controller } from 'react-hook-form';
 import { Field } from '../../../ui/field';
-import 'react-phone-input-2/lib/style.css';
 import { OrderSchema } from '../../organisms/OrderForm';
-import {
-  Control,
-  FieldErrors,
-  UseFormSetValue,
-} from 'react-hook-form/dist/types';
+import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Client } from '../../../../features/clients/clientTypes';
 import { formatPhone } from '../../../../utils/phone';
 

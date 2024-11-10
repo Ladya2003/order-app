@@ -1,14 +1,17 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import clientsData from '../../data/clients.json';
-import { Client, ClientState } from './clientTypes';
+import { ClientState } from './clientTypes';
 
 const initialState: ClientState = {
   clients: [],
 };
 
-export const fetchClients = createAsyncThunk('clients/fetchClients', async () => {
-  return clientsData;
-});
+export const fetchClients = createAsyncThunk(
+  'clients/fetchClients',
+  async () => {
+    return clientsData;
+  },
+);
 
 const clientSlice = createSlice({
   name: 'clients',

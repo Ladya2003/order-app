@@ -1,13 +1,7 @@
-// components/OrderItem.tsx
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { updateOrderStatus } from '../../../../features/orders/orderSlice';
 import { Table, Button, Text } from '@chakra-ui/react';
-import {
-  Order,
-  OrderState,
-  OrderStatus,
-} from '../../../../features/orders/orderTypes';
+import { Order, OrderStatus } from '../../../../features/orders/orderTypes';
 import { colors } from '../../../../theme/theme';
 import dayjs from 'dayjs';
 import { statusColors } from '../../../../utils/status';
