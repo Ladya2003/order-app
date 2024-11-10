@@ -1,11 +1,10 @@
 export interface Client {
   id?: number;
-  name: string;
+  name?: string;
   phone: string;
   address: string;
 }
-  
-  export interface ClientState {
-    clients: Client[];
-  }
-  
+
+export interface ClientState {
+  clients: Client[];
+}

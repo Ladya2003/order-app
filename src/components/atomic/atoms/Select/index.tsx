@@ -1,4 +1,4 @@
-import { colors } from '../theme/theme';
+import { colors } from '../../../../theme/theme';
 import {
   SelectContent,
   SelectItem,
@@ -13,19 +13,19 @@ import { CloseIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
 export interface IOption {
-  label: string;
-  value: string;
+  label?: string;
+  value?: string;
 }
 
 export interface ISelectProps {
   options: IOption[];
   title?: string;
   placeholder: string;
-  value: string;
+  value?: string;
   onChange: (payload: string) => void;
 }
 
-export const Select = ({
+export const SelectAtom = ({
   options,
   title,
   placeholder,

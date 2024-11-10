@@ -1,8 +1,8 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, Heading } from '@chakra-ui/react';
 import { useState } from 'react';
-import { OrderForm } from './components/OrderForm';
-import OrderList from './components/OrderList';
+import { OrderFormOrganism } from './components/atomic/organisms/OrderForm';
+import OrderListOrganism from './components/atomic/organisms/OrderList';
 import { colors } from './theme/theme';
 
 function App() {
@@ -42,9 +42,9 @@ function App() {
         )}
       </Flex>
 
-      {isCreating && <OrderForm setIsCreating={setIsCreating} />}
+      {isCreating && <OrderFormOrganism setIsCreating={setIsCreating} />}
 
-      {!isCreating && <OrderList />}
+      {!isCreating && <OrderListOrganism />}
     </Flex>
   );
 }

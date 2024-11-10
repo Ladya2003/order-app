@@ -18,7 +18,7 @@ export interface Order {
   id: number;
   client: Client;
   deliveryDate: string;
-  shippingCost: number;
+  shippingCost?: number;
   products: IProduct[];
   status: OrderStatus;
   comments?: string;

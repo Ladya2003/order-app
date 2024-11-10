@@ -1,50 +1,23 @@
 // components/OrderItem.tsx
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { updateOrderStatus } from '../features/orders/orderSlice';
+import { updateOrderStatus } from '../../../../features/orders/orderSlice';
 import { Table, Button, Text } from '@chakra-ui/react';
-import { Order, OrderState, OrderStatus } from '../features/orders/orderTypes';
-import { colors } from '../theme/theme';
+import {
+  Order,
+  OrderState,
+  OrderStatus,
+} from '../../../../features/orders/orderTypes';
+import { colors } from '../../../../theme/theme';
 import dayjs from 'dayjs';
+import { statusColors } from '../../../../utils/status';
 
 interface OrderItemProps {
   order: Order;
+  index: number;
 }
 
-interface IStatusProps {
-  status: OrderStatus;
-}
-
-const statusColors = ({ status }: IStatusProps) => {
-  switch (status) {
-    case OrderStatus.Created:
-      return {
-        color: colors.status.createdColor,
-        borderColor: colors.status.createdColor,
-        bgColor: colors.status.createdBgColor,
-      };
-    case OrderStatus.Rejected:
-      return {
-        color: colors.status.rejectedColor,
-        borderColor: colors.status.rejectedColor,
-        bgColor: colors.status.rejectedBgColor,
-      };
-    case OrderStatus.Completed:
-      return {
-        color: colors.status.completedColor,
-        borderColor: colors.status.completedColor,
-        bgColor: colors.status.completedBgColor,
-      };
-    default:
-      return {
-        color: colors.status.createdColor,
-        borderColor: colors.status.createdColor,
-        bgColor: colors.status.createdBgColor,
-      };
-  }
-};
-
-const OrderItem: React.FC<OrderItemProps> = ({
+const OrderItemOrganism = ({
   order: {
     id,
     client: { name, phone, address },
@@ -54,7 +27,8 @@ const OrderItem: React.FC<OrderItemProps> = ({
     products,
     comments,
   },
-}) => {
+  index,
+}: OrderItemProps) => {
   const dispatch = useDispatch();
 
   const handleStatusChange = (status: Order['status']) => {
@@ -65,6 +39,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
 
   return (
     <Table.Row color={colors.primary.secondary}>
+      <Table.Cell>{index + 1}</Table.Cell>
       <Table.Cell>{name}</Table.Cell>
       <Table.Cell>{phone}</Table.Cell>
       <Table.Cell>
@@ -82,7 +57,6 @@ const OrderItem: React.FC<OrderItemProps> = ({
         </Text>
       </Table.Cell>
       <Table.Cell>{dayjs(deliveryDate).format('DD.MM.YYYY')}</Table.Cell>
-      <Table.Cell>{address}</Table.Cell>
       <Table.Cell>{address}</Table.Cell>
 
       {products.length < 1 ? (
@@ -109,7 +83,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
 
           <Table.Cell>
             {products.map((product) => (
-              <Text>{product.count * product.count + shippingCost}</Text>
+              <Text>{product.count * product.count + (shippingCost || 0)}</Text>
             ))}
           </Table.Cell>
         </>
@@ -136,4 +110,4 @@ const OrderItem: React.FC<OrderItemProps> = ({
   );
 };
 
-export default OrderItem;
+export default OrderItemOrganism;

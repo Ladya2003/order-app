@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, Flex, Input, Icon } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
@@ -11,12 +11,11 @@ interface IDataSelector {
   onChange: (value: Date) => void;
 }
 
-const DateSelector = ({ value, onChange }: IDataSelector) => {
+const DateSelectorAtom = ({ value, onChange }: IDataSelector) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const selectedDay = value ? dayjs(value) : null;
 
-  // Check if selectedDate matches today, tomorrow, or the day after
   const isToday = selectedDay ? selectedDay.isSame(dayjs(), 'day') : false;
   const isTomorrow = selectedDay
     ? selectedDay.isSame(dayjs().add(1, 'day'), 'day')
@@ -25,7 +24,6 @@ const DateSelector = ({ value, onChange }: IDataSelector) => {
     ? selectedDay.isSame(dayjs().add(2, 'day'), 'day')
     : false;
 
-  // Helper function to set the date based on days offset
   const setDate = (daysOffset: number) => {
     const newDate = dayjs().add(daysOffset, 'day').toDate();
     onChange(newDate);
@@ -42,7 +40,6 @@ const DateSelector = ({ value, onChange }: IDataSelector) => {
           borderRadius="md"
           p="2"
         >
-          {/* Icon with click event to toggle calendar */}
           <Icon
             color="blue.500"
             mr="2"
@@ -52,12 +49,11 @@ const DateSelector = ({ value, onChange }: IDataSelector) => {
             <CalendarIcon />
           </Icon>
 
-          {/* DatePicker Input with minDate restriction */}
           <DatePicker
             selected={value}
             onChange={(date: Date | null) => onChange(date ?? new Date())}
             dateFormat="dd.MM.yyyy"
-            minDate={new Date()} // Prevents selecting dates before today
+            minDate={new Date()}
             customInput={
               <Input
                 value={value ? dayjs(value).format('DD.MM.YYYY') : ''}
@@ -112,4 +108,4 @@ const DateSelector = ({ value, onChange }: IDataSelector) => {
   );
 };
 
-export default DateSelector;
+export default DateSelectorAtom;
