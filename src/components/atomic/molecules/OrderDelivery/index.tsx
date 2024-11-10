@@ -14,32 +14,51 @@ import { Field } from '../../../ui/field';
 import { colors } from '../../../../theme/theme';
 import { ClipboardIconButton } from '../../../ui/clipboard';
 import DateSelectorAtom from '../../atoms/DateSelector';
-import { OrderSchema } from '../../organisms/OrderForm';
+import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';
+import { useToggle } from '../../../../hooks';
 
-interface IOrderDelivery {
+type Props = {
   errors: FieldErrors<OrderSchema>;
   control: Control<OrderSchema, any>;
   setShippingPrice: (price: number) => void;
-}
+};
+
+const initialSuggestions: [{ value?: string }] = [{}];
 
 export const OrderDeliveryMolecule = ({
-  errors,
+  errors: {
+    client: clientError,
+    shippingCost: shippingCostError,
+    deliveryDate: deliveryDateError,
+  },
   control,
   setShippingPrice,
-}: IOrderDelivery) => {
-  const [suggestions, setSuggestions] = useState<[{ value?: string }]>([{}]);
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
+}: Props) => {
+  const [suggestions, setSuggestions] = useState(initialSuggestions);
+
+  const {
+    isToggledOn: isDropdownVisible,
+    setToggleOn: showDropdown,
+    setToggleOff: hideDropdown,
+  } = useToggle();
+
+  const hasSuggestions =
+    suggestions.length > 1 ||
+    (suggestions.length === 1 && Object.keys(suggestions[0]).length > 0);
+  const shouldSuggestionsShow = isDropdownVisible && hasSuggestions;
 
   const handleInputChange = async (value: string) => {
-    if (value) {
-      const suggestions = await fetchAddressSuggestions(value);
+    if (!value) {
+      setSuggestions(initialSuggestions);
+      hideDropdown();
 
-      setSuggestions(suggestions);
-      setDropdownVisible(true);
-    } else {
-      setSuggestions([{}]);
-      setDropdownVisible(false);
+      return;
     }
+
+    const suggestions = await fetchAddressSuggestions(value);
+
+    setSuggestions(suggestions);
+    showDropdown();
   };
 
   return (
@@ -50,8 +69,8 @@ export const OrderDeliveryMolecule = ({
 
       <Field
         label="Адрес *"
-        invalid={!!errors.client?.address}
-        errorText={errors.client?.address?.message}
+        invalid={!!clientError?.address}
+        errorText={clientError?.address?.message}
       >
         <Controller
           control={control}
@@ -69,10 +88,8 @@ export const OrderDeliveryMolecule = ({
                   }}
                   placeholder="Введите адрес"
                   color={colors.primary.secondary}
-                  onBlur={() =>
-                    setTimeout(() => setDropdownVisible(false), 100)
-                  }
-                  onFocus={() => value && setDropdownVisible(true)}
+                  onBlur={() => setTimeout(() => hideDropdown(), 100)}
+                  onFocus={() => value && showDropdown()}
                 />
 
                 <ClipboardRoot value={value}>
@@ -83,36 +100,33 @@ export const OrderDeliveryMolecule = ({
               </Flex>
 
               <Box position="relative" width="100%">
-                {isDropdownVisible &&
-                  (suggestions.length > 1 ||
-                    (suggestions.length === 1 &&
-                      Object.keys(suggestions[0]).length > 0)) && (
-                    <Box
-                      position="absolute"
-                      bg="white"
-                      boxShadow="md"
-                      zIndex="10"
-                      width="100%"
-                      top={0}
-                    >
-                      <List.Root>
-                        {suggestions.map((suggestion, index) => (
-                          <ListItem
-                            key={index}
-                            p={2}
-                            cursor="pointer"
-                            _hover={{ bg: 'gray.100' }}
-                            onClick={() => {
-                              onChange(suggestion.value);
-                              setDropdownVisible(false);
-                            }}
-                          >
-                            {suggestion.value}
-                          </ListItem>
-                        ))}
-                      </List.Root>
-                    </Box>
-                  )}
+                {shouldSuggestionsShow && (
+                  <Box
+                    position="absolute"
+                    bg="white"
+                    boxShadow="md"
+                    zIndex="10"
+                    width="100%"
+                    top={0}
+                  >
+                    <List.Root>
+                      {suggestions.map((suggestion, index) => (
+                        <ListItem
+                          key={index}
+                          p={2}
+                          cursor="pointer"
+                          _hover={{ bg: 'gray.100' }}
+                          onClick={() => {
+                            onChange(suggestion.value);
+                            hideDropdown();
+                          }}
+                        >
+                          {suggestion.value}
+                        </ListItem>
+                      ))}
+                    </List.Root>
+                  </Box>
+                )}
               </Box>
             </>
           )}
@@ -121,8 +135,8 @@ export const OrderDeliveryMolecule = ({
 
       <Field
         label="Стоимость доставки"
-        invalid={!!errors.shippingCost}
-        errorText={errors.shippingCost?.message}
+        invalid={!!shippingCostError}
+        errorText={shippingCostError?.message}
       >
         <Controller
           control={control}
@@ -164,15 +178,15 @@ export const OrderDeliveryMolecule = ({
 
       <Field
         label="Дата *"
-        invalid={!!errors.deliveryDate}
-        errorText={errors.deliveryDate?.message}
+        invalid={!!deliveryDateError}
+        errorText={deliveryDateError?.message}
       >
         <Controller
           control={control}
           name="deliveryDate"
-          render={({ field: { value, onChange } }) => {
-            return <DateSelectorAtom value={value} onChange={onChange} />;
-          }}
+          render={({ field: { value, onChange } }) => (
+            <DateSelectorAtom value={value} onChange={onChange} />
+          )}
         />
       </Field>
     </Fieldset.Content>

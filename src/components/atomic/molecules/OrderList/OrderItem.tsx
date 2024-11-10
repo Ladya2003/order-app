@@ -4,14 +4,14 @@ import { Table, Button, Text } from '@chakra-ui/react';
 import { Order, OrderStatus } from '../../../../features/orders/orderTypes';
 import { colors } from '../../../../theme/theme';
 import dayjs from 'dayjs';
-import { statusColors } from '../../../../utils/status';
+import { statusColors } from '../../../../utils';
 
 interface OrderItemProps {
   order: Order;
   index: number;
 }
 
-const OrderItemOrganism = ({
+const OrderItemMolecule = ({
   order: {
     id,
     client: { name, phone, address },
@@ -104,4 +104,4 @@ const OrderItemOrganism = ({
   );
 };
 
-export default OrderItemOrganism;
+export default OrderItemMolecule;

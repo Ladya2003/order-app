@@ -5,24 +5,24 @@ import InputMask from 'react-input-mask';
 import { SelectAtom } from '../../atoms/Select';
 import { Controller } from 'react-hook-form';
 import { Field } from '../../../ui/field';
-import { OrderSchema } from '../../organisms/OrderForm';
+import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';
 import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Client } from '../../../../features/clients/clientTypes';
 import { formatPhone } from '../../../../utils/phone';
 
-interface IOrderData {
+type Props = {
   errors: FieldErrors<OrderSchema>;
   control: Control<OrderSchema, any>;
   clients: Client[];
   setValue: UseFormSetValue<OrderSchema>;
-}
+};
 
 export const OrderDataMolecule = ({
-  errors,
+  errors: { client: clientError },
   control,
   clients,
   setValue,
-}: IOrderData) => {
+}: Props) => {
   const options = clients.map((client) => ({
     label: client.name,
     value: client.name,
@@ -36,65 +36,61 @@ export const OrderDataMolecule = ({
 
       <Field
         label="Имя клиента"
-        invalid={!!errors.client?.name}
-        errorText={errors.client?.name?.message}
+        invalid={!!clientError?.name}
+        errorText={clientError?.name?.message}
       >
         <Controller
           control={control}
           name="client.name"
-          render={({ field: { value, onChange } }) => {
-            return (
-              <SelectAtom
-                options={options}
-                value={value}
-                onChange={(name) => {
-                  const newClient = clients.find(
-                    (client) => client.name === name,
-                  );
+          render={({ field: { value, onChange } }) => (
+            <SelectAtom
+              options={options}
+              value={value}
+              onChange={(name) => {
+                const newClient = clients.find(
+                  (client) => client.name === name,
+                );
 
-                  onChange(name);
+                onChange(name);
 
-                  if (newClient) {
-                    const { phone, address } = newClient;
+                if (newClient) {
+                  const { phone, address } = newClient;
 
-                    setValue('client.phone', formatPhone(phone));
-                    setValue('client.address', address);
-                  }
-                }}
-                placeholder="Выберите постоянного клиента"
-              />
-            );
-          }}
+                  setValue('client.phone', formatPhone(phone));
+                  setValue('client.address', address);
+                }
+              }}
+              placeholder="Выберите постоянного клиента"
+            />
+          )}
         />
       </Field>
 
       <Field
         label="Номер телефона *"
-        invalid={!!errors.client?.phone}
-        errorText={errors.client?.phone?.message}
+        invalid={!!clientError?.phone}
+        errorText={clientError?.phone?.message}
       >
         <Controller
           control={control}
           name="client.phone"
-          render={({ field: { value, onChange } }) => {
-            return (
-              <Box width="100%">
-                <InputMask
-                  mask="+7 (999) 999-99-99"
-                  name={value}
-                  value={value}
-                  onChange={onChange}
-                  color={colors.primary.secondary}
-                  style={{
-                    border: `1px solid ${!errors.client?.phone ? colors.primary.inputBorder : colors.status.rejectedColor}`,
-                    borderRadius: '4px',
-                    width: '100%',
-                    padding: '8px',
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field: { value, onChange } }) => (
+            <Box width="100%">
+              <InputMask
+                mask="+7 (999) 999-99-99"
+                name={value}
+                value={value}
+                onChange={onChange}
+                color={colors.primary.secondary}
+                style={{
+                  border: `1px solid ${!clientError?.phone ? colors.primary.inputBorder : colors.status.rejectedColor}`,
+                  borderRadius: '4px',
+                  width: '100%',
+                  padding: '8px',
+                }}
+              />
+            </Box>
+          )}
         />
       </Field>
 
@@ -102,18 +98,16 @@ export const OrderDataMolecule = ({
         <Controller
           control={control}
           name="comments"
-          render={({ field: { value, onChange } }) => {
-            return (
-              <Textarea
-                name={value}
-                value={value}
-                onChange={onChange}
-                color={colors.primary.secondary}
-                placeholder="Введите комментарий"
-                rows={4}
-              />
-            );
-          }}
+          render={({ field: { value, onChange } }) => (
+            <Textarea
+              name={value}
+              value={value}
+              onChange={onChange}
+              color={colors.primary.secondary}
+              placeholder="Введите комментарий"
+              rows={4}
+            />
+          )}
         />
       </Field>
     </Fieldset.Content>

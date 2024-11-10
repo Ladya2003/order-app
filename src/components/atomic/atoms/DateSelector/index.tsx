@@ -1,33 +1,37 @@
-import { useState } from 'react';
 import { Box, Button, Flex, Input, Icon } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
-import { colors } from '../../../../theme/theme';
+import { useToggle } from '../../../../hooks';
+import { isDayAfterTomorrow, isToday, isTomorrow } from '../../../../utils';
+import { styles } from './styles';
 
-interface IDataSelector {
+type Props = {
   value: Date;
   onChange: (value: Date) => void;
-}
+};
 
-const DateSelectorAtom = ({ value, onChange }: IDataSelector) => {
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+const DateSelectorAtom = ({ value, onChange }: Props) => {
+  const {
+    isToggledOn: isCalendarOpen,
+    toggle: toggleCalendar,
+    setToggleOff: hideCalendar,
+  } = useToggle();
 
-  const selectedDay = value ? dayjs(value) : null;
+  const today = dayjs();
+  const todayDate = today.toDate();
 
-  const isToday = selectedDay ? selectedDay.isSame(dayjs(), 'day') : false;
-  const isTomorrow = selectedDay
-    ? selectedDay.isSame(dayjs().add(1, 'day'), 'day')
-    : false;
-  const isDayAfterTomorrow = selectedDay
-    ? selectedDay.isSame(dayjs().add(2, 'day'), 'day')
-    : false;
+  const selectedDay = dayjs(value);
+  const formattedSelectedDay = selectedDay.format('DD.MM.YYYY');
 
-  const setDate = (daysOffset: number) => {
-    const newDate = dayjs().add(daysOffset, 'day').toDate();
+  const handleButtonClick = (daysOffset: number) => {
+    const newDate = today.add(daysOffset, 'day').toDate();
     onChange(newDate);
   };
+
+  const handleDataPickerChange = (date: Date | null) =>
+    onChange(date ?? todayDate);
 
   return (
     <Box>
@@ -44,25 +48,21 @@ const DateSelectorAtom = ({ value, onChange }: IDataSelector) => {
             color="blue.500"
             mr="2"
             cursor="pointer"
-            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+            onClick={toggleCalendar}
           >
             <CalendarIcon />
           </Icon>
 
           <DatePicker
             selected={value}
-            onChange={(date: Date | null) => onChange(date ?? new Date())}
+            onChange={handleDataPickerChange}
             dateFormat="dd.MM.yyyy"
-            minDate={new Date()}
+            minDate={todayDate}
             customInput={
-              <Input
-                value={value ? dayjs(value).format('DD.MM.YYYY') : ''}
-                readOnly
-                color="gray.700"
-              />
+              <Input value={formattedSelectedDay} readOnly color="gray.700" />
             }
             open={isCalendarOpen}
-            onClickOutside={() => setIsCalendarOpen(false)}
+            onClickOutside={hideCalendar}
           />
         </Flex>
       </Box>
@@ -70,36 +70,26 @@ const DateSelectorAtom = ({ value, onChange }: IDataSelector) => {
       <Flex gap="2">
         <Button
           variant="outline"
-          bgColor={isToday ? colors.status.createdColor : 'transparent'}
-          color={isToday ? colors.primary.paper : colors.status.createdColor}
-          borderColor={colors.status.createdColor}
-          onClick={() => setDate(0)}
+          onClick={() => handleButtonClick(0)}
+          {...(isToday(selectedDay) ? styles.active : styles.inactive)}
         >
           Сегодня
         </Button>
 
         <Button
           variant="outline"
-          bgColor={isTomorrow ? colors.status.createdColor : 'transparent'}
-          color={isTomorrow ? colors.primary.paper : colors.status.createdColor}
-          borderColor={colors.status.createdColor}
-          onClick={() => setDate(1)}
+          onClick={() => handleButtonClick(1)}
+          {...(isTomorrow(selectedDay) ? styles.active : styles.inactive)}
         >
           Завтра
         </Button>
 
         <Button
           variant="outline"
-          bgColor={
-            isDayAfterTomorrow ? colors.status.createdColor : 'transparent'
-          }
-          color={
-            isDayAfterTomorrow
-              ? colors.primary.paper
-              : colors.status.createdColor
-          }
-          borderColor={colors.status.createdColor}
-          onClick={() => setDate(2)}
+          onClick={() => handleButtonClick(2)}
+          {...(isDayAfterTomorrow(selectedDay)
+            ? styles.active
+            : styles.inactive)}
         >
           Послезавтра
         </Button>

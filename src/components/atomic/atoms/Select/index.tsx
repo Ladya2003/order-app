@@ -12,18 +12,18 @@ import {
 import { CloseIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
-export interface IOption {
+interface IOption {
   label?: string;
   value?: string;
 }
 
-export interface ISelectProps {
+type Props = {
   options: IOption[];
   title?: string;
   placeholder: string;
   value?: string;
   onChange: (payload: string) => void;
-}
+};
 
 export const SelectAtom = ({
   options,
@@ -31,7 +31,7 @@ export const SelectAtom = ({
   placeholder,
   value,
   onChange,
-}: ISelectProps) => {
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClear = (e: React.MouseEvent) => {
@@ -39,13 +39,18 @@ export const SelectAtom = ({
     onChange('');
   };
 
+  const handleExitComplete = () => setIsOpen(false);
+
+  const handleValueChange = ({ value }: { value: [string] }) =>
+    onChange(...value);
+
   return (
     <SelectRoot
       size="sm"
       width="320px"
-      onValueChange={({ value }: { value: [string] }) => onChange(...value)}
+      onValueChange={handleValueChange}
       onOpenChange={setIsOpen}
-      onExitComplete={() => setIsOpen(false)}
+      onExitComplete={handleExitComplete}
     >
       {title && <SelectLabel>{title}</SelectLabel>}
 

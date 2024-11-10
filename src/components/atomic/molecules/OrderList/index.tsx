@@ -2,18 +2,20 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../store/store';
 import { Table } from '@chakra-ui/react';
-import OrderItemOrganism from '../OrderItem';
+import OrderItemMolecule from './OrderItem';
 import { useDispatch } from 'react-redux';
 import { fetchClients } from '../../../../features/clients/clientSlice';
 import { colors } from '../../../../theme/theme';
 
-const OrderListOrganism = () => {
-  const orders = useSelector((state: RootState) => state.orders?.orders);
+const selectOrders = (state: RootState) => state.orders.orders;
+
+const OrderListMolecule = () => {
+  const orders = useSelector(selectOrders);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchClients());
-  }, [dispatch]);
+  }, []);
 
   return (
     <Table.Root variant="outline" borderRadius="4px" boxShadow="none">
@@ -57,11 +59,11 @@ const OrderListOrganism = () => {
       </Table.Header>
       <Table.Body>
         {orders.map((order, index) => (
-          <OrderItemOrganism key={order.id} order={order} index={index} />
+          <OrderItemMolecule key={order.id} order={order} index={index} />
         ))}
       </Table.Body>
     </Table.Root>
   );
 };
 
-export default OrderListOrganism;
+export default OrderListMolecule;

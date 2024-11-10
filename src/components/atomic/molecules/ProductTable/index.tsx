@@ -11,8 +11,8 @@ import {
 import { OrderStatus } from '../../../../features/orders/orderTypes';
 import { Field } from '../../../ui/field';
 import { colors } from '../../../../theme/theme';
-import { OrderSchema } from '../../organisms/OrderForm';
-import { formatArticle } from '../../../../utils/article';
+import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';
+import { formatArticle } from '../../../../utils';
 import {
   UseFormGetValues,
   UseFormHandleSubmit,
