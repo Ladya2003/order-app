@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../../store/store';
+import { AppDispatch, RootState } from '../../../../app/store';
 import { Table } from '@chakra-ui/react';
 import OrderItemMolecule from './OrderItem';
 import { useDispatch } from 'react-redux';
 import { fetchClients } from '../../../../features/clients/clientSlice';
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 
 const selectOrders = (state: RootState) => state.orders.orders;
 

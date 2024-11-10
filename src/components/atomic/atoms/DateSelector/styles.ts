@@ -1,4 +1,4 @@
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 
 const commonStyles = {
   borderColor: colors.status.createdColor,

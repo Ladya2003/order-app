@@ -2,22 +2,22 @@ import { useState } from 'react';
 import { Fieldset, Flex, Box } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState } from '@/app/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 import { formatPhone } from '../../../../utils';
 import { OrderDataMolecule } from '../../molecules/OrderData';
 import { OrderDeliveryMolecule } from '../../molecules/OrderDelivery';
 import { ProductTableMolecule } from '../../molecules/ProductTable';
 import { orderSchema, OrderSchema } from './validationSchemas';
 
-interface IOrderFormProps {
-  setIsCreating: (state: boolean) => void;
-}
+type Props = {
+  onHideCreation: () => void;
+};
 
-export const selectClients = (state: RootState) => state.clients.clients;
+const selectClients = (state: RootState) => state.clients.clients;
 
-export const OrderFormOrganism = ({ setIsCreating }: IOrderFormProps) => {
+export const OrderFormOrganism = ({ onHideCreation }: Props) => {
   const clients = useSelector(selectClients);
   const [shippingPrice, setShippingPrice] = useState(0);
 
@@ -72,7 +72,7 @@ export const OrderFormOrganism = ({ setIsCreating }: IOrderFormProps) => {
           trigger={trigger}
           getValues={getValues}
           isValid={isValid}
-          setIsCreating={setIsCreating}
+          onHideCreation={onHideCreation}
           handleSubmit={handleSubmit}
         />
       </Flex>

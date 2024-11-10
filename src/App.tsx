@@ -1,16 +1,16 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, Heading } from '@chakra-ui/react';
-import { useState } from 'react';
 import { OrderFormOrganism } from './components/atomic/organisms/OrderForm';
 import OrderListMolecule from './components/atomic/molecules/OrderList';
-import { colors } from './theme/theme';
+import { colors } from './theme';
+import { useToggle } from './hooks';
 
 function App() {
-  const [isCreating, setIsCreating] = useState(false);
-
-  const toogleCreation = () => {
-    setIsCreating(!isCreating);
-  };
+  const {
+    isToggledOn: isCreating,
+    toggle: toggleCreation,
+    setToggleOff: hideCreation,
+  } = useToggle();
 
   return (
     <Flex
@@ -26,7 +26,7 @@ function App() {
 
         {!isCreating && (
           <Button
-            onClick={toogleCreation}
+            onClick={toggleCreation}
             padding="10px"
             borderRadius="4px"
             display="flex"
@@ -42,9 +42,11 @@ function App() {
         )}
       </Flex>
 
-      {isCreating && <OrderFormOrganism setIsCreating={setIsCreating} />}
-
-      {!isCreating && <OrderListMolecule />}
+      {isCreating ? (
+        <OrderFormOrganism onHideCreation={hideCreation} />
+      ) : (
+        <OrderListMolecule />
+      )}
     </Flex>
   );
 }

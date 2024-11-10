@@ -1,4 +1,4 @@
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 import {
   SelectContent,
   SelectItem,

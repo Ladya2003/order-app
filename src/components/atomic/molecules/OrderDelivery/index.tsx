@@ -11,7 +11,7 @@ import {
 import { fetchAddressSuggestions } from '../../../../services/dadataService';
 import { Controller, FieldErrors, Control } from 'react-hook-form';
 import { Field } from '../../../ui/field';
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 import { ClipboardIconButton } from '../../../ui/clipboard';
 import DateSelectorAtom from '../../atoms/DateSelector';
 import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';

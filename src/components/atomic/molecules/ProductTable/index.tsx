@@ -10,7 +10,7 @@ import {
 } from 'react-hook-form';
 import { OrderStatus } from '../../../../features/orders/orderTypes';
 import { Field } from '../../../ui/field';
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 import { OrderSchema } from '../../organisms/OrderForm/validationSchemas';
 import { formatArticle } from '../../../../utils';
 import {
@@ -26,7 +26,7 @@ interface IProductTable {
   trigger: UseFormTrigger<OrderSchema>;
   getValues: UseFormGetValues<OrderSchema>;
   isValid: boolean;
-  setIsCreating: (state: boolean) => void;
+  onHideCreation: () => void;
   handleSubmit: UseFormHandleSubmit<OrderSchema>;
 }
 
@@ -37,7 +37,7 @@ export const ProductTableMolecule = ({
   trigger,
   getValues,
   isValid,
-  setIsCreating,
+  onHideCreation,
   handleSubmit,
 }: IProductTable) => {
   const dispatch = useDispatch();
@@ -87,7 +87,7 @@ export const ProductTableMolecule = ({
         }),
       );
 
-      setIsCreating(false);
+      onHideCreation();
     }
   };
   return (
@@ -317,7 +317,7 @@ export const ProductTableMolecule = ({
 
           <Flex gap="16px" alignItems="center" justifyContent="flex-end">
             <Button
-              onClick={() => setIsCreating(false)}
+              onClick={onHideCreation}
               bgColor="transparent"
               color={colors.secondary.buttonColor}
               padding="10px"

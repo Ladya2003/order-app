@@ -1,4 +1,4 @@
-import { colors } from '../../../../theme/theme';
+import { colors } from '../../../../theme';
 
 import { Fieldset, Box, Textarea } from '@chakra-ui/react';
 import InputMask from 'react-input-mask';
