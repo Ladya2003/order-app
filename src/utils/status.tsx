@@ -1,5 +1,5 @@
-import { OrderStatus } from '@/features/orders/orderTypes';
-import { colors } from '@/theme/theme';
+import { OrderStatus } from '../features/orders/orderTypes';
+import { colors } from '../theme/theme';
 
 interface IStatusProps {
   status: OrderStatus;
